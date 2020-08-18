@@ -3,10 +3,10 @@ package com.example.market.db.entity
 class DataSource {
 
     companion object {
-        fun createDataSet(): ArrayList<BlogPost> {
-            val list = ArrayList<BlogPost>()
+        fun createDataSet(): ArrayList<Fruit> {
+            val list = ArrayList<Fruit>()
             list.add(
-                BlogPost(
+                Fruit(
                     1,
                     "apple",
                     150,
@@ -15,7 +15,7 @@ class DataSource {
                 )
             )
             list.add(
-                BlogPost(
+                Fruit(
                     2,
                     "banana",
                     450,
@@ -25,7 +25,7 @@ class DataSource {
             )
 
             list.add(
-                BlogPost(
+                Fruit(
                     3,
                     "cherry",
                     230,
@@ -34,7 +34,7 @@ class DataSource {
                 )
             )
             list.add(
-                BlogPost(
+                Fruit(
                     4,
                     "orange",
                     400,
@@ -43,7 +43,7 @@ class DataSource {
                 )
             )
             list.add(
-                BlogPost(
+                Fruit(
                     5,
                     "peach",
                     370,
@@ -52,7 +52,7 @@ class DataSource {
                 )
             )
             list.add(
-                BlogPost(
+                Fruit(
                     6,
                     "pineapple",
                     760,
@@ -61,7 +61,7 @@ class DataSource {
                 )
             )
             list.add(
-                BlogPost(
+                Fruit(
                     7,
                     "strawberry",
                     320,

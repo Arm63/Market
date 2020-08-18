@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.market.R
-import com.example.market.db.entity.BlogPost
+import com.example.market.db.entity.Fruit
 import kotlinx.android.synthetic.main.layout_blog_list_item.view.*
 
 class BlogRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var items: List<BlogPost> = ArrayList()
+    private var items: List<Fruit> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return BLogViewHolder(
@@ -32,15 +32,15 @@ class BlogRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int = items.size
 
-    fun submitList(fruitList: List<BlogPost>) {
+    fun submitList(fruitList: List<Fruit>) {
         items = fruitList
     }
 
     class BLogViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(blogPost: BlogPost) {
+        fun bind(blogPost: Fruit) {
 
-            itemView.tv_fruit_item_name.text = blogPost.fruit_Name
+            itemView.tv_fruit_item_name.text = blogPost.fruitName
             itemView.tv_fruit_item_price.text = blogPost.price.toString()
 
             val requestOption = RequestOptions()

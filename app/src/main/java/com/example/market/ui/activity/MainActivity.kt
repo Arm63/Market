@@ -1,22 +1,21 @@
 package com.example.market.ui.activity
 
 import android.os.Bundle
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.market.R
 import com.example.market.db.entity.Fruit
 import com.example.market.db.entity.FruitResponse
-import com.example.market.io.HttpRequestManager
-import com.example.market.io.HttpResponseUtil
-import com.example.market.ui.adapter.BlogRecyclerAdapter
-import com.example.market.util.Constant
-import com.example.market.util.NetworkUtil
-import com.google.gson.Gson
+import com.example.market.ui.adapter.FruitRecyclerAdapter
+import com.example.market.util.Constant.API.FRUIT_LIST
+import com.google.android.material.navigation.NavigationView
+import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.*
+import okhttp3.*
+import java.io.IOException
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), FruitRecyclerAdapter.OnItemClickListener, NavigationView.OnNavigationItemSelectedListener {
 
 
     // ===========================================================
@@ -28,8 +27,6 @@ class MainActivity : BaseActivity() {
     // ===========================================================
     // Fields
     // ===========================================================
-
-    private lateinit var blogAdapter: BlogRecyclerAdapter
 
 
     // ===========================================================
@@ -46,39 +43,56 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initRecycleView()
-        loadData()
+        fetchJson()
     }
 
-    override fun getLayoutResource(): Int =
-        R.layout.activity_main
+    override fun getLayoutResource(): Int = R.layout.activity_main
 
     // ===========================================================
     // Listeners, methods for/from Interfaces
     // ===========================================================
 
+    override fun onItemClick(item: Fruit, position: Int) {
+        Toast.makeText(this, item.fruitName, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onItemLongClick(item: Fruit, position: Int) {
+        TODO("Not yet implemented")
+    }
+
+
+
     // ===========================================================
     // Methods
     // ===========================================================
 
-    private fun loadData() {
-        var response =
-            URL("https://raw.githubusercontent.com/Arm63/armen63.io/master/fruit_list/fruits.json").readText()
-        var gson = Gson()
-        val data = gson.fromJson(response, Array<Fruit>::class.java)
+    private fun fetchJson() {
+        val request = Request.Builder().url(FRUIT_LIST).build()
+        val client = OkHttpClient();
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                val body = response.body?.string()
+                val gson = GsonBuilder().create()
+                val items = gson.fromJson(body, FruitResponse::class.java)
+                runOnUiThread {
+                    initRecycleView(items)
+                }
+            }
 
-        for(x in 0 until data.size)
-            println(data[x].fruitName+ "      ")
-
-
-
+            override fun onFailure(call: Call, e: IOException) {
+                println("Failed to execute request")
+            }
+        })
     }
 
-    fun initRecycleView() {
-        rv_main.apply {
-            rv_main.layoutManager = LinearLayoutManager(context)
-            blogAdapter = BlogRecyclerAdapter()
-            rv_main.adapter = blogAdapter
+    private fun initRecycleView(items: FruitResponse?) {
+        rv_main.layoutManager = LinearLayoutManager(this@MainActivity)
+        if (items != null) {
+            rv_main.adapter = FruitRecyclerAdapter(items.fruits, this@MainActivity)
         }
+    }
+
+    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+        TODO("Not yet implemented")
     }
 }

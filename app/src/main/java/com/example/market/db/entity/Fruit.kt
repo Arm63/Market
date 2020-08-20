@@ -1,7 +1,10 @@
 package com.example.market.db.entity
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Fruit(
 
     @field:SerializedName("fruit_id")
@@ -18,4 +21,4 @@ data class Fruit(
 
     @field:SerializedName("image")
     val image: String? = null
-)
+) : Parcelable

@@ -1,8 +1,9 @@
 package com.example.market.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.market.R
 import com.example.market.db.entity.Fruit
@@ -22,7 +23,7 @@ class MainActivity : BaseActivity(), FruitRecyclerAdapter.OnItemClickListener, N
     // Constants
     // ===========================================================
 
-    private val LOG_TAG: String? = BaseActivity::class.java.simpleName
+    private val LOG_TAG: String? = MainActivity::class.java.simpleName
 
     // ===========================================================
     // Fields
@@ -53,7 +54,10 @@ class MainActivity : BaseActivity(), FruitRecyclerAdapter.OnItemClickListener, N
     // ===========================================================
 
     override fun onItemClick(item: Fruit, position: Int) {
-        Toast.makeText(this, item.fruitName, Toast.LENGTH_SHORT).show()
+        val intent = Intent(this,FruitActivity::class.java)
+        Log.d("asdasdasdassdsa", item.fruitName)
+        intent.putExtra("Username",item)
+        startActivity(intent)
     }
 
     override fun onItemLongClick(item: Fruit, position: Int) {
@@ -96,3 +100,4 @@ class MainActivity : BaseActivity(), FruitRecyclerAdapter.OnItemClickListener, N
         TODO("Not yet implemented")
     }
 }
+

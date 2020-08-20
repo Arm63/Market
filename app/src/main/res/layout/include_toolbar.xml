@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             android:maxLines="1"
             android:minLines="1"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/darker_gray" />
 
         <TextView
             android:id="@+id/tv_toolbar_subtitle"

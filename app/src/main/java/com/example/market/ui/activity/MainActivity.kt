@@ -1,22 +1,21 @@
 package com.example.market.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.example.market.R
-import com.example.market.db.entity.Fruit
-import com.example.market.db.entity.FruitResponse
-import com.example.market.ui.adapter.FruitRecyclerAdapter
-import com.example.market.util.Constant.API.FRUIT_LIST
+import com.example.market.ui.fragment.FruitListFragment
+import com.example.market.util.Constant
+import com.example.market.util.FragmentTransactionManager
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.GsonBuilder
-import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.*
-import java.io.IOException
 
-class MainActivity : BaseActivity(), FruitRecyclerAdapter.OnItemClickListener, NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), View.OnClickListener,
+    NavigationView.OnNavigationItemSelectedListener {
 
 
     // ===========================================================
@@ -28,7 +27,8 @@ class MainActivity : BaseActivity(), FruitRecyclerAdapter.OnItemClickListener, N
     // ===========================================================
     // Fields
     // ===========================================================
-
+    private var mDrawerLayout: DrawerLayout? = null
+    private var mNavigationView: NavigationView? = null
 
     // ===========================================================
     // Constructors
@@ -44,7 +44,25 @@ class MainActivity : BaseActivity(), FruitRecyclerAdapter.OnItemClickListener, N
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fetchJson()
+        findViews()
+        setListeners()
+        customizeActionBar()
+        initDrawer()
+        openScreen(
+            FruitListFragment.newInstance()!!,
+            R.id.nav_fruit_list,
+            false
+        )
+        catchNotificationData()
+    }
+
+    override fun findViews() {
+        mDrawerLayout = findViewById<View>(R.id.dl_main) as DrawerLayout
+        mNavigationView = findViewById<View>(R.id.nav_main) as NavigationView
+    }
+
+    private fun customizeActionBar() {
+        setActionBarTitle(getString(R.string.app_name))
     }
 
     override fun getLayoutResource(): Int = R.layout.activity_main
@@ -53,51 +71,79 @@ class MainActivity : BaseActivity(), FruitRecyclerAdapter.OnItemClickListener, N
     // Listeners, methods for/from Interfaces
     // ===========================================================
 
-    override fun onItemClick(item: Fruit, position: Int) {
-        val intent = Intent(this,FruitActivity::class.java)
-        Log.d("asdasdasdassdsa", item.fruitName)
-        intent.putExtra("Username",item)
-        startActivity(intent)
+    override fun onBackPressed() {
+        if (mDrawerLayout!!.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout!!.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
-
-    override fun onItemLongClick(item: Fruit, position: Int) {
-        TODO("Not yet implemented")
-    }
-
-
 
     // ===========================================================
     // Methods
     // ===========================================================
 
-    private fun fetchJson() {
-        val request = Request.Builder().url(FRUIT_LIST).build()
-        val client = OkHttpClient();
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string()
-                val gson = GsonBuilder().create()
-                val items = gson.fromJson(body, FruitResponse::class.java)
-                runOnUiThread {
-                    initRecycleView(items)
+
+    private fun openScreen(fragment: Fragment, item: Int, addToBackStack: Boolean) {
+        mNavigationView!!.menu.findItem(item).isChecked = true
+        FragmentTransactionManager.displayFragment(
+            supportFragmentManager,
+            fragment,
+            R.id.fl_main_container,
+            addToBackStack
+        )
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_fruit_list ->
+                FruitListFragment.newInstance()?.let {
+                    openScreen(
+                        it,
+                        R.id.nav_fruit_list,
+                        false
+                    )
                 }
-            }
+            R.id.nav_fv_list -> {
+//                FruitListFragment.newInstance()?.let {
+//                    openScreen(
+//                        it,
+//                        R.id.nav_fv_list,
+//                        true
+//                    )
 
-            override fun onFailure(call: Call, e: IOException) {
-                println("Failed to execute request")
+                Toast.makeText(this, "hl@ chka es fragment@", Toast.LENGTH_LONG)
+                    .show()
             }
-        })
-    }
-
-    private fun initRecycleView(items: FruitResponse?) {
-        rv_main.layoutManager = LinearLayoutManager(this@MainActivity)
-        if (items != null) {
-            rv_main.adapter = FruitRecyclerAdapter(items.fruits, this@MainActivity)
         }
+        mDrawerLayout!!.closeDrawer(GravityCompat.START)
+        return true
     }
 
-    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
-        TODO("Not yet implemented")
+    override fun onClick(v: View) {}
+
+
+    private fun setListeners() {
+        mNavigationView!!.setNavigationItemSelectedListener(this)
+    }
+
+    private fun initDrawer() {
+        val actionBarDrawerToggle = ActionBarDrawerToggle(
+            this,
+            mDrawerLayout,
+            mToolbar,
+            R.string.msg_navigation_drawer_open,
+            R.string.msg_navigation_drawer_close
+        )
+        mDrawerLayout!!.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
+    }
+
+    private fun catchNotificationData() {
+        val notificationMessage = intent.getStringExtra(Constant.Extra.NOTIFICATION_DATA)
+        if (notificationMessage != null) {
+            Toast.makeText(this, notificationMessage, Toast.LENGTH_LONG).show()
+        }
     }
 }
 

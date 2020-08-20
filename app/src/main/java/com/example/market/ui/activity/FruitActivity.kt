@@ -27,15 +27,19 @@ class FruitActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getData()
+        setData()
 
+
+    }
+
+    private fun setData() {
         Glide.with(this)
             .load(mFruit.image)
             .into(iv_fruit_image)
 
-        tv_fruit_title.setText(mFruit.fruitName)
-        tv_fruit_price.setText(mFruit.price.toString())
-
-
+        tv_fruit_title.text = mFruit.fruitName
+        tv_fruit_price.text = mFruit.price.toString()
+        tv_fruit_desc.text = mFruit.description
     }
 
     private fun getData() {

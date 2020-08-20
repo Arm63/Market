@@ -16,6 +16,6 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             }, 1)
         else
-            Toast.makeText(this,"Internet chka",Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Internet chka", Toast.LENGTH_LONG).show()
     }
 }

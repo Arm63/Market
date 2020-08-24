@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.include_toolbar.*
 abstract class BaseActivity : AppCompatActivity() {
 
     // ===========================================================
-    // Constants
+    //  ants
     // ===========================================================
 
     private val LOG_TAG = BaseActivity::class.java.simpleName
@@ -20,6 +20,8 @@ abstract class BaseActivity : AppCompatActivity() {
     // Fields
     // ===========================================================
 
+    var mToolbar: Toolbar? = null
+    private var mTabLayout: TabLayout? = null
 
     // ===========================================================
     // Constructors
@@ -32,8 +34,7 @@ abstract class BaseActivity : AppCompatActivity() {
     // ===========================================================
     // Methods for/from SuperClass
     // ===========================================================
-    var mToolbar: Toolbar? = null
-    private var mTabLayout: TabLayout? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +42,10 @@ abstract class BaseActivity : AppCompatActivity() {
         findViews()
 
         if (mToolbar != null) {
-            setSupportActionBar(mToolbar as Toolbar)
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setHomeButtonEnabled(true)
-            supportActionBar!!.setDisplayShowTitleEnabled(false)
+            setSupportActionBar(mToolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setHomeButtonEnabled(true)
+            supportActionBar?.setDisplayShowTitleEnabled(false)
         }
     }
 
@@ -54,10 +55,12 @@ abstract class BaseActivity : AppCompatActivity() {
     // ===========================================================
     // Methods
     // ===========================================================
-    open fun findViews() {
+    private fun findViews() {
         mTabLayout = findViewById(R.id.ctl)
         mToolbar = findViewById(R.id.tb)
     }
+
+    protected abstract fun getLayoutResource(): Int
 
     open fun getToolBar(): Toolbar? {
         return mToolbar
@@ -83,7 +86,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     open fun setActionBarTitle(title: String?) {
         tv_toolbar_title.text = title
-        mToolbar?.title = title
     }
 
     protected open fun hideActionBar() {
@@ -106,7 +108,5 @@ abstract class BaseActivity : AppCompatActivity() {
     open fun showActionBarIcon() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
-
-    protected abstract fun getLayoutResource(): Int
 
 }

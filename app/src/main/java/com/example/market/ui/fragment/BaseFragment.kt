@@ -43,20 +43,22 @@ abstract class BaseFragment : Fragment() {
     // Methods
     // ===========================================================
     protected fun hideActionBarIcon() {
-        (getActivity() as BaseActivity).hideActionBarIcon()
+        (activity as BaseActivity).hideActionBarIcon()
     }
 
     protected fun showActionBarIcon() {
-        (getActivity() as BaseActivity).showActionBarIcon()
+        (activity as BaseActivity).showActionBarIcon()
     }
 
     protected fun setActionBarIcon() {
-        (getActivity() as BaseActivity).hideActionBarIcon()
+        (activity as BaseActivity).hideActionBarIcon()
     }
 
     protected fun setActionBarTitle(actionBarTitle: String?) {
-        (getActivity() as BaseActivity).setActionBarTitle(actionBarTitle)
-    } // ===========================================================
+        (activity as BaseActivity).setActionBarTitle(actionBarTitle)
+    }
+
+    // ===========================================================
     // Inner and Anonymous Classes
     // ===========================================================
 }

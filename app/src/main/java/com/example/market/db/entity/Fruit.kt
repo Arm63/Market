@@ -7,18 +7,22 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Fruit(
 
-    @field:SerializedName("fruit_id")
-    val fruitId: Int? = null,
+    @field:SerializedName("id")
+    var id: Long? = null,
 
-    @field:SerializedName("fruit_name")
-    val fruitName: String? = null,
+    @field:SerializedName("name")
+    var name: String? = null,
 
     @field:SerializedName("price")
-    val price: Int? = null,
+    var price: Int? = null,
+
+    var isFavorite: Boolean = false,
 
     @field:SerializedName("description")
-    val description: String? = null,
+    var description: String? = null,
 
     @field:SerializedName("image")
-    val image: String? = null
+    var image: String? = null
+
 ) : Parcelable
+

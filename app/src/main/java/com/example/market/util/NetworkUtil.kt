@@ -30,7 +30,7 @@ class NetworkUtil private constructor() {
             }
     }
 }
-fun fetchJson() : ArrayList<Fruit>? {
+fun fetchJson() : List<Fruit>? {
     val request = Request.Builder().url(Constant.API.FRUIT_LIST).build()
     val client = OkHttpClient();
     var items: FruitResponse? = null

@@ -13,6 +13,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <provider
+            android:name=".db.provider.FruitProvider"
+            android:authorities="${applicationId}"
+            android:exported="false"/>
+
+
+        <service
+            android:name=".io.service.FruitIntentService"
+            android:exported="false"/>
         <activity
             android:name="com.example.market.ui.activity.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -27,8 +36,7 @@
 
 
         <activity
-            android:name=".ui.activity.MainActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:name=".ui.activity.MainActivity" />
 
     </application>
 

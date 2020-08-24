@@ -3,12 +3,14 @@ package com.example.market.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.market.R
 import com.example.market.db.entity.Fruit
 import kotlinx.android.synthetic.main.layout_fruit_list_item.view.*
+
 
 class FruitRecyclerAdapter(
     var mItems: ArrayList<Fruit>,
@@ -81,10 +83,17 @@ class FruitRecyclerAdapter(
         private var onItemClickListener: OnItemClickListener
     ) : RecyclerView.ViewHolder(itemView) {
 
+        var llItemContainer: LinearLayout? = null
+
+        init {
+            llItemContainer = itemView.findViewById(R.id.ll_fruit_item_container)
+        }
+
         fun bind(fruit: Fruit) {
 
-            itemView.tv_fruit_item_name.text = fruit.fruitName
+            itemView.tv_fruit_item_name.text = fruit.name
             itemView.tv_fruit_item_price.text = fruit.price.toString()
+
 
             val requestOption = RequestOptions()
                 .placeholder(R.drawable.ic_launcher_background)
@@ -95,8 +104,18 @@ class FruitRecyclerAdapter(
                 .load(fruit.image)
                 .into(itemView.iv_fruit_item)
 
-            itemView.ll_fruit_item_container.setOnClickListener {
-                onItemClickListener.onItemClick(fruitArrayList[adapterPosition], adapterPosition)
+            llItemContainer!!.setOnClickListener {
+                onItemClickListener.onItemClick(
+                    fruitArrayList[adapterPosition],
+                    adapterPosition
+                )
+            }
+            llItemContainer!!.setOnLongClickListener {
+                onItemClickListener.onItemLongClick(
+                    fruitArrayList[adapterPosition],
+                    adapterPosition
+                )
+                true
             }
         }
     }

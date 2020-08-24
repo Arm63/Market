@@ -1,6 +1,7 @@
 package com.example.market.util
 
 internal class Constant {
+
     object API {
         const val HOST = "https://raw.githubusercontent.com/Arm63/armen63.io/master"
         const val FRUIT_LIST = HOST + "/fruit_list/fruits.json"
@@ -12,16 +13,16 @@ internal class Constant {
 
     object Argument {
         const val ARGUMENT_DATA = "ARGUMENT_DATA"
-        const val ARGUMENT_PRODUCT = "ARGUMENT_PRODUCT"
+        const val ARGUMENT_FRUIT = "ARGUMENT_FRUIT"
     }
 
     object Extra {
-        const val PRODUCT_ID = "PRODUCT_ID"
+        const val FRUIT_ID = "FRUIT_ID"
         const val URL = "URL"
         const val POST_ENTITY = "POST_ENTITY"
         const val REQUEST_TYPE = "REQUEST_TYPE"
         const val NOTIFICATION_DATA = "NOTIFICATION_DATA"
-        const val PRODUCT = "PRODUCT"
+        const val FRUIT = "FRUIT"
         const val MENU_STATE = "MENU_STATE"
     }
 
@@ -45,8 +46,8 @@ internal class Constant {
     }
 
     object RequestType {
-        const val PRODUCT_LIST = 1
-        const val PRODUCT_ITEM = 2
+        const val FRUIT_LIST = 1
+        const val FRUIT_ITEM = 2
     }
 
     object RequestMethod {

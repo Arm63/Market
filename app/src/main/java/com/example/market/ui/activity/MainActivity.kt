@@ -1,6 +1,7 @@
 package com.example.market.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -27,8 +28,8 @@ class MainActivity : BaseActivity(), View.OnClickListener,
     // ===========================================================
     // Fields
     // ===========================================================
-    private var mDrawerLayout: DrawerLayout? = null
-    private var mNavigationView: NavigationView? = null
+    private lateinit var mDrawerLayout: DrawerLayout
+    private lateinit var mNavigationView: NavigationView
 
     // ===========================================================
     // Constructors
@@ -56,7 +57,7 @@ class MainActivity : BaseActivity(), View.OnClickListener,
         catchNotificationData()
     }
 
-    override fun findViews() {
+    private fun findViews() {
         mDrawerLayout = findViewById<View>(R.id.dl_main) as DrawerLayout
         mNavigationView = findViewById<View>(R.id.nav_main) as NavigationView
     }
@@ -72,8 +73,8 @@ class MainActivity : BaseActivity(), View.OnClickListener,
     // ===========================================================
 
     override fun onBackPressed() {
-        if (mDrawerLayout!!.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout!!.closeDrawer(GravityCompat.START)
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -85,14 +86,18 @@ class MainActivity : BaseActivity(), View.OnClickListener,
 
 
     private fun openScreen(fragment: Fragment, item: Int, addToBackStack: Boolean) {
-        mNavigationView!!.menu.findItem(item).isChecked = true
+
+        mNavigationView.menu.findItem(item).isChecked = true
         FragmentTransactionManager.displayFragment(
             supportFragmentManager,
             fragment,
             R.id.fl_main_container,
             addToBackStack
         )
+        Log.d(LOG_TAG,"jpcneluc heto")
+
     }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -101,7 +106,7 @@ class MainActivity : BaseActivity(), View.OnClickListener,
                     openScreen(
                         it,
                         R.id.nav_fruit_list,
-                        false
+                        true
                     )
                 }
             R.id.nav_fv_list -> {
@@ -116,7 +121,7 @@ class MainActivity : BaseActivity(), View.OnClickListener,
                     .show()
             }
         }
-        mDrawerLayout!!.closeDrawer(GravityCompat.START)
+        mDrawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -124,7 +129,7 @@ class MainActivity : BaseActivity(), View.OnClickListener,
 
 
     private fun setListeners() {
-        mNavigationView!!.setNavigationItemSelectedListener(this)
+        mNavigationView.setNavigationItemSelectedListener(this)
     }
 
     private fun initDrawer() {
@@ -135,7 +140,7 @@ class MainActivity : BaseActivity(), View.OnClickListener,
             R.string.msg_navigation_drawer_open,
             R.string.msg_navigation_drawer_close
         )
-        mDrawerLayout!!.addDrawerListener(actionBarDrawerToggle)
+        mDrawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
     }
 

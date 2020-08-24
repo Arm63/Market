@@ -9,4 +9,3 @@ data class FruitResponse(
 	@field:SerializedName("fruits")
 	val fruits: ArrayList<Fruit>
 ) : Parcelable
-

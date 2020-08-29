@@ -4,7 +4,6 @@ import android.content.AsyncQueryHandler
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.util.Log
 import com.example.market.db.FruitDB
 import com.example.market.db.entity.Fruit
 import com.example.market.db.provider.UriBuilder
@@ -44,21 +43,18 @@ class FruitAsyncQueryHandler(context: Context, queryListenerReference: AsyncQuer
     // Fields
     // ===========================================================
 
-    private lateinit var mQueryListenerReference: WeakReference<AsyncQueryListener>
+    private var mQueryListenerReference
+            = WeakReference(queryListenerReference)
 
     // ===========================================================
     // Constructors
     // ===========================================================
 
-    init {
-        mQueryListenerReference = WeakReference(queryListenerReference)
-    }
-
-    override fun onQueryComplete(token: Int, cookie: Any?, cursor: Cursor?) {
+    override fun onQueryComplete(token: Int, cookie: Any?, cursor: Cursor) {
         val queryListener = mQueryListenerReference.get()
         if (queryListener != null) {
             queryListener.onQueryComplete(token, cookie, cursor)
-        } else cursor?.close()
+        } else cursor.close()
     }
 
     override fun onInsertComplete(token: Int, cookie: Any?, uri: Uri?) {
@@ -91,7 +87,7 @@ class FruitAsyncQueryHandler(context: Context, queryListenerReference: AsyncQuer
      *************************************************************/
 
     @Synchronized
-    fun gerFruit(id: Int) {
+    fun getFruit(id: Long) {
         startQuery(
             QueryToken.GET_FRUIT,
             null,
@@ -105,7 +101,6 @@ class FruitAsyncQueryHandler(context: Context, queryListenerReference: AsyncQuer
 
     @Synchronized
     fun getFruits() {
-        Log.d(LOG_TAG, "en vor ha lcuma lcuma qcuma")
         startQuery(
             QueryToken.GET_FRUITS,
             null,
@@ -127,14 +122,15 @@ class FruitAsyncQueryHandler(context: Context, queryListenerReference: AsyncQuer
         )
     }
 
+    //134Tox@ poxaca id qcaca
     @Synchronized
     fun updateFruit(fruit: Fruit) {
         startUpdate(
             QueryToken.UPDATE_FRUIT,
             null,
-            UriBuilder.buildFruitUri(),
+            fruit.id?.let { UriBuilder.buildFruitUri(it) },
             FruitDB.composeValues(fruit, FruitDB.ContentValuesType.FRUITS),
-            FruitDB.FRUIT_ID + "=?",
+            "${FruitDB.FRUIT_ID}=?",
             arrayOf((fruit.id).toString())
         )
     }
@@ -147,6 +143,17 @@ class FruitAsyncQueryHandler(context: Context, queryListenerReference: AsyncQuer
             UriBuilder.buildFruitUri(),
             FruitDB.FRUIT_ID + "=?",
             arrayOf((fruit.id).toString())
+        )
+    }
+
+    @Synchronized
+    fun deleteFruit(fruit: Fruit) {
+        startDelete(
+            QueryToken.DELETE_FRUIT,
+            null,
+            UriBuilder.buildFruitUri(fruit.id!!),
+            null,
+            null
         )
     }
 
@@ -163,7 +170,7 @@ class FruitAsyncQueryHandler(context: Context, queryListenerReference: AsyncQuer
     }
 
     @Synchronized
-    fun getAllFavoriteProducts() {
+    fun getAllFavoriteFruits() {
         startQuery(
             QueryToken.GET_FAVORITE_FRUITS,
             null,
@@ -174,4 +181,5 @@ class FruitAsyncQueryHandler(context: Context, queryListenerReference: AsyncQuer
             null
         )
     }
+
 }

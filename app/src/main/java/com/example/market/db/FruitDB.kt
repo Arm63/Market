@@ -12,6 +12,8 @@ object FruitDB {
     object ContentValuesType {
         const val FRUITS = "FRUITS"
         const val DESCRIPTION = "DESCRIPTION"
+        const val ALL_EXCEPT_FAVORITE = "ALL_EXCEPT_FAVORITE"
+
     }
 
 
@@ -28,8 +30,6 @@ object FruitDB {
     const val FRUIT_IMAGE = "FRUIT_IMAGE"
     const val FRUIT_FAVORITE = "FRUIT_FAVORITE"
     const val FRUIT_DESCRIPTION = "FRUIT_DESCRIPTION"
-
-
     const val CREATE_FRUIT_TABLE = ("CREATE TABLE IF NOT EXISTS " + FRUIT_TABLE
             + " ("
             + FRUIT_PK + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -58,7 +58,7 @@ object FruitDB {
     }
 
 // ===========================================================
-//  ructors
+//  Constructors
 // ===========================================================
 // ===========================================================
 // Getter & Setter
@@ -79,9 +79,10 @@ object FruitDB {
 
     fun composeValues(item: Any, table: String?): ContentValues {
         val values = ContentValues()
-        val fruit: Fruit = item as Fruit
+        var fruit: Fruit
         when (table) {
             FRUITS -> {
+                fruit = item as Fruit
                 values.put(FRUIT_ID, fruit.id)
                 values.put(FRUIT_NAME, fruit.name)
                 values.put(FRUIT_PRICE, fruit.price)
@@ -89,17 +90,17 @@ object FruitDB {
                 values.put(FRUIT_DESCRIPTION, fruit.description)
                 values.put(FRUIT_IMAGE, fruit.image)
             }
-            DESCRIPTION -> values.put(
-                FRUIT_DESCRIPTION,
-                fruit.description
-            )
+            DESCRIPTION -> {
+                fruit = item as Fruit
+                values.put(FRUIT_DESCRIPTION, fruit.description)
+            }
         }
         return values
     }
 
     fun composeValuesArray(objects: ArrayList<*>, table: String?): Array<ContentValues> {
         val valuesList = ArrayList<ContentValues>()
-        val fruits: ArrayList<Fruit> = objects as ArrayList<Fruit>
+        val fruits = objects as ArrayList<Fruit>
 
         when (table) {
             FRUITS -> for (fruit in fruits) {
@@ -115,6 +116,7 @@ object FruitDB {
             }
         }
         return valuesList.toTypedArray()
+
     }
 
 }

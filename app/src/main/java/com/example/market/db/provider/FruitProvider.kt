@@ -8,7 +8,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
+import android.text.TextUtils
 import com.example.market.BuildConfig
+import com.example.market.db.FruitDB
 import com.example.market.db.FruitDB.FRUIT_TABLE
 import com.example.market.db.FruitDBHelper
 
@@ -30,7 +32,7 @@ class FruitProvider : ContentProvider() {
 
     }
 
-    private val sUriMatcher: UriMatcher? = FruitProvider.buildUriMatcher()
+    private val sUriMatcher: UriMatcher? = buildUriMatcher()
     private lateinit var mDBHelper: FruitDBHelper
 
 
@@ -105,7 +107,7 @@ class FruitProvider : ContentProvider() {
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         val contentUri: Uri
         val db = mDBHelper.writableDatabase
-        val id: Int
+        val id: Long
 
         when (sUriMatcher?.match(uri)) {
             Code.SINGLE_FRUIT -> {
@@ -114,8 +116,8 @@ class FruitProvider : ContentProvider() {
                     null,
                     values,
                     SQLiteDatabase.CONFLICT_REPLACE
-                ).toInt()
-                contentUri = ContentUris.withAppendedId(UriBuilder.buildFruitUri(), id.toLong())
+                ).toLong()
+                contentUri = ContentUris.withAppendedId(UriBuilder.buildFruitUri(), id)
             }
             Code.ALL_FRUITS -> {
                 id = db.insertWithOnConflict(
@@ -123,7 +125,7 @@ class FruitProvider : ContentProvider() {
                     null,
                     values,
                     SQLiteDatabase.CONFLICT_REPLACE
-                ).toInt()
+                ).toLong()
                 contentUri = ContentUris.withAppendedId(UriBuilder.buildFruitUri(), id.toLong())
             }
             else -> throw IllegalArgumentException("Unsupported URI: $uri")
@@ -155,14 +157,24 @@ class FruitProvider : ContentProvider() {
         uri: Uri,
         values: ContentValues?,
         selection: String?,
-        selectionArgs: Array<out String>?
+        selectionArgs: Array<String>?
     ): Int {
-        val updateCount: Int
+        var updateCount: Int
+        var sss = selection
         val db = mDBHelper.writableDatabase
 
         updateCount = when (sUriMatcher?.match(uri)) {
-            Code.SINGLE_FRUIT -> db.update(FRUIT_TABLE, values, selection, selectionArgs)
             Code.ALL_FRUITS -> db.update(FRUIT_TABLE, values, selection, selectionArgs)
+            Code.SINGLE_FRUIT -> {
+                var id = uri.lastPathSegment
+                if (TextUtils.isEmpty(selection)) {
+                    sss = FruitDB.FRUIT_ID + "=" + id
+                } else {
+                    sss = sss + " AND " + FruitDB.FRUIT_ID + "=" + id
+                }
+                return  db.update(FRUIT_TABLE, values, sss, selectionArgs)
+//                db.update(FRUIT_TABLE, values, selection, selectionArgs)
+            }
             else -> throw IllegalArgumentException("Unsupported URI: $uri")
         }
         return updateCount

@@ -10,6 +10,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.market.R
+import com.example.market.ui.fragment.BaseFragment
 import com.example.market.ui.fragment.FruitListFragment
 import com.example.market.util.Constant
 import com.example.market.util.FragmentTransactionManager
@@ -50,7 +51,7 @@ class MainActivity : BaseActivity(), View.OnClickListener,
         customizeActionBar()
         initDrawer()
         openScreen(
-            FruitListFragment.newInstance()!!,
+            FruitListFragment.newInstance(),
             R.id.nav_fruit_list,
             false
         )
@@ -76,8 +77,18 @@ class MainActivity : BaseActivity(), View.OnClickListener,
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
-        }
+            val fragment = supportFragmentManager.findFragmentById(R.id.fl_main_container)
+            if (!(fragment as BaseFragment?)?.onBackPressed()!!) {
+                if (fragment !is FruitListFragment) {
+                    openScreen(
+                        FruitListFragment.newInstance(),
+                        R.id.nav_fruit_list,
+                        false
+                    )
+                } else {
+                    finish()
+                }
+            }        }
     }
 
     // ===========================================================
@@ -94,7 +105,7 @@ class MainActivity : BaseActivity(), View.OnClickListener,
             R.id.fl_main_container,
             addToBackStack
         )
-        Log.d(LOG_TAG,"jpcneluc heto")
+        Log.d(LOG_TAG, "jpcneluc heto")
 
     }
 
@@ -102,13 +113,10 @@ class MainActivity : BaseActivity(), View.OnClickListener,
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_fruit_list ->
-                FruitListFragment.newInstance()?.let {
-                    openScreen(
-                        it,
-                        R.id.nav_fruit_list,
-                        true
-                    )
-                }
+                openScreen(
+                    FruitListFragment.newInstance(),
+                    R.id.nav_fruit_list, false
+                )
             R.id.nav_fv_list -> {
 //                FruitListFragment.newInstance()?.let {
 //                    openScreen(

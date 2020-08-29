@@ -79,7 +79,6 @@ class CursorReader {
                 AppUtil.intToBoolean(cursor.getInt(cursor.getColumnIndex(FRUIT_FAVORITE)))
             fruit.description = cursor.getString(cursor.getColumnIndex(FRUIT_DESCRIPTION))
             fruit.image = cursor.getString(cursor.getColumnIndex(FRUIT_IMAGE))
-
             return fruit
         }
     }

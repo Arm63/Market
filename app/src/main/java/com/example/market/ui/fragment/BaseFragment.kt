@@ -1,10 +1,8 @@
 package com.example.market.ui.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.market.io.bus.BusProvider
 import com.example.market.ui.activity.BaseActivity
 
 abstract class BaseFragment : Fragment() {
@@ -20,14 +18,6 @@ abstract class BaseFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     // ===========================================================
@@ -57,8 +47,13 @@ abstract class BaseFragment : Fragment() {
     protected fun setActionBarTitle(actionBarTitle: String?) {
         (activity as BaseActivity).setActionBarTitle(actionBarTitle)
     }
+    open fun onBackPressed(): Boolean {
+        return false
+    }
 
-    // ===========================================================
-    // Inner and Anonymous Classes
-    // ===========================================================
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        BusProvider.unregister(this)
+    }
 }

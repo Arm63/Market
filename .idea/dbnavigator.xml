@@ -23,14 +23,10 @@
     <autoscroll-to-editor value="true" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes>
-      <connection connection-id="8ba1c8b8-9f97-4af7-9133-866b07b1d960">
-        <schema name="main" object-types="constraint, table, column, view, index, dataset trigger" />
-      </connection>
-    </loaded-nodes>
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="8ba1c8b8-9f97-4af7-9133-866b07b1d960">
+    <connection id="5e69dfe2-1b20-49fc-98e0-0d5b6f4bc429">
       <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select * from main.FRUIT_TABLE]]></console>
     </connection>
   </component>
@@ -38,13 +34,12 @@
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="8ba1c8b8-9f97-4af7-9133-866b07b1d960" />
-  </component>
-  <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="8ba1c8b8-9f97-4af7-9133-866b07b1d960" dataset="main.FRUIT_TABLE" active-filter-id="" />
+    <connection id="5e69dfe2-1b20-49fc-98e0-0d5b6f4bc429" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
-    <last-used-providers />
+    <last-used-providers>
+      <object-type object-type="TABLE" editor-provider="DATA" />
+    </last-used-providers>
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
@@ -68,7 +63,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="8ba1c8b8-9f97-4af7-9133-866b07b1d960" active="true">
+      <connection id="5e69dfe2-1b20-49fc-98e0-0d5b6f4bc429" active="true">
         <database>
           <name value="Connection" />
           <description value="" />

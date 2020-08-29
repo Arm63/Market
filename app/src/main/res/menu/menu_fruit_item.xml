@@ -5,26 +5,20 @@
     <item
         android:id="@+id/menu_fruit_edit"
         android:icon="@drawable/ic_edit_white"
-        android:title="@string/edit"
+        android:title="Edit"
+        android:visible="false"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_fruit_done"
         android:icon="@drawable/ic_done_white"
-        android:title="@string/done"
+        android:title="Done"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
-        android:id="@+id/menu_fruit_unfav"
+        android:id="@+id/menu_fruit_favorite"
         android:icon="@drawable/ic_unfavorite"
         android:title="@string/unfavorite"
-        android:visible="true"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/menu_fruit_fav"
-        android:icon="@drawable/ic_favorite"
-        android:title="@string/favorite"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
 
 </menu>

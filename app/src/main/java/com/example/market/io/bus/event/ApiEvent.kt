@@ -11,10 +11,11 @@ class ApiEvent<T> {
     var eventType = 0
     var isSuccess = false
 
-    @Nullable
+    @get:Nullable
     var eventData: T? = null
         private set
 
+    constructor() {}
     constructor(eventType: Int, eventData: T) {
         this.eventType = eventType
         this.eventData = eventData

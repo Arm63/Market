@@ -1,5 +1,6 @@
 package com.example.market.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,7 @@ import kotlinx.android.synthetic.main.layout_fruit_list_item.view.*
 
 
 class FruitRecyclerAdapter(
-    var mItems: ArrayList<Fruit>,
+    var mFruitList: ArrayList<Fruit>,
     var onItemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<FruitRecyclerAdapter.FruitViewHolder>() {
@@ -43,22 +44,20 @@ class FruitRecyclerAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FruitViewHolder {
-        return FruitViewHolder(
-            LayoutInflater
-                .from(parent.context)
-                .inflate(R.layout.layout_fruit_list_item, parent, false),
-            mItems,
-            onItemClickListener
-        )
+        val view: View = LayoutInflater.from(parent.context)
+            .inflate(R.layout.layout_fruit_list_item, parent, false)
+        return FruitViewHolder(view, mFruitList, onItemClickListener)
     }
 
     override fun onBindViewHolder(holder: FruitViewHolder, position: Int) {
-        holder.bind(mItems[position])
+        holder.bindData(mFruitList[position])
     }
 
-    override fun getItemCount(): Int = mItems.size
+    override fun getItemCount(): Int = mFruitList.size
 
-
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+    }
     // ===========================================================
     // Other Listeners, methods for/from Interfaces
     // ===========================================================
@@ -79,22 +78,13 @@ class FruitRecyclerAdapter(
 
     class FruitViewHolder constructor(
         itemView: View,
-        private var fruitArrayList: ArrayList<Fruit>,
+        var fruitList: ArrayList<Fruit>,
         private var onItemClickListener: OnItemClickListener
     ) : RecyclerView.ViewHolder(itemView) {
 
-        var llItemContainer: LinearLayout? = null
+        var llItemContainer: LinearLayout? = itemView.findViewById(R.id.ll_fruit_item_container)
 
-        init {
-            llItemContainer = itemView.findViewById(R.id.ll_fruit_item_container)
-        }
-
-        fun bind(fruit: Fruit) {
-
-            itemView.tv_fruit_item_name.text = fruit.name
-            itemView.tv_fruit_item_price.text = fruit.price.toString()
-
-
+        fun bindData(fruit: Fruit) {
             val requestOption = RequestOptions()
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_background)
@@ -104,17 +94,16 @@ class FruitRecyclerAdapter(
                 .load(fruit.image)
                 .into(itemView.iv_fruit_item)
 
+            itemView.tv_fruit_item_name.text = fruit.name
+            itemView.tv_fruit_item_price.text = fruit.price.toString()
+            Log.d("bindi mejic", fruit.toString())
+
             llItemContainer!!.setOnClickListener {
-                onItemClickListener.onItemClick(
-                    fruitArrayList[adapterPosition],
-                    adapterPosition
-                )
+                onItemClickListener.onItemClick(fruitList[adapterPosition], adapterPosition)
+                Log.d("bindi clicki mejic", fruit.toString())
             }
             llItemContainer!!.setOnLongClickListener {
-                onItemClickListener.onItemLongClick(
-                    fruitArrayList[adapterPosition],
-                    adapterPosition
-                )
+                onItemClickListener.onItemLongClick(fruitList[adapterPosition], adapterPosition)
                 true
             }
         }

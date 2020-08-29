@@ -7,7 +7,7 @@ import android.preference.PreferenceManager
 @Suppress("DEPRECATION")
 class Preference private constructor(context: Context) {
 
-    private val mSharedPreferences: SharedPreferences
+    private val mSharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val mEditor: SharedPreferences.Editor
 
     fun setUserFave(key: String?, userFave: Boolean?) {
@@ -74,7 +74,6 @@ class Preference private constructor(context: Context) {
     }
 
     init {
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         mEditor = mSharedPreferences.edit()
     }
 }

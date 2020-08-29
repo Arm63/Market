@@ -6,7 +6,7 @@ import com.example.market.db.FruitDB.FRUIT_TABLE
 
 class UriBuilder {
     companion object {
-        fun buildFruitUri(id: Int): Uri =
+        fun buildFruitUri(id: Long): Uri =
             Uri.parse("content://" + BuildConfig.APPLICATION_ID + "/" + FRUIT_TABLE + "/" + id)
 
         fun buildFruitUri(): Uri =

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Fruit List</string>
+    <string name="app_name">Arajin Recipes</string>
 
     <!--Util-->
     <string name="msg_network_connection_error">No Internet connection</string>
@@ -11,53 +11,53 @@
     <string name="msg_navigation_drawer_open">Open navigation drawer</string>
     <string name="msg_navigation_drawer_close">Close navigation drawer</string>
     <string name="msg_some_error">Something went wrong, please try again</string>
+    <string name="msg_no_favorites">No favorite recipes</string>
 
     <!--Navigation drawer menu items-->
-    <string name="text_fruit_list">fruit List</string>
+    <string name="text_recipe_list">recipe List</string>
     <string name="text_about">About</string>
+    <string name="text_favorite_recipes">Favorites</string>
+    <string name="text_recipe_vp">recipe vp</string>
     <string name="text_logout">Logout</string>
-    <string name="text_fruit_vp">fruit viewPager</string>
+
+    <!--Dialog-->
+    <string name="text_btn_dialog_cancel">Cancel</string>
+    <string name="text_btn_dialog_delete">Delete</string>
+    <string name="text_btn_dialog_ok">OK</string>
+    <string name="text_btn_dialog_yes">Yes</string>
+    <string name="text_btn_dialog_no">No</string>
+    <string name="msg_dialog_delete_recipe">Are you sure to delete this item?</string>
+    <string name="msg_dialog_add_recipe">Are you sure to add this item?</string>
+
+    <!--Toolbar titles-->
+    <string name="text_add_recipe">Add recipe</string>
+    <string name="text_recipe">recipe</string>
+
+    <!--Add recipe screen strings-->
+    <string name="hint_edt_add_recipe_title">Title</string>
+    <string name="hint_edt_add_recipe_price">Price</string>
+    <string name="hint_edt_add_recipe_desc">Description</string>
+    <string name="text_btn_add_recipe_add">Add</string>
 
 
-    <string name="favorite">Favorite</string>
-    <string name="text_four">Fourth item</string>
-    <string name="text_five">Fifth item</string>
-    <string name="text_six">Logout</string>
-    <string name="text_welcome">Welcome to \'Start Template\' \nPlease, login with any fake credentials</string>
+    <!--recipe screen strings-->
+    <string name="hint_edt_recipe_title">Title</string>
+    <string name="hint_edt_recipe_price">Price</string>
+    <string name="hint_edt_recipe_desc">Description</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="no_internet">NO INTERNET CONNECTION </string>
-
-    <string name="edt_fruit_add_name">NAME</string>
-    <string name="edt_fruit_add_price">PRICE</string>
-    <string name="edt_fruit_add_desc">DESCRIPTION</string>
-
-    <string name="btn_fruit_add">ADD</string>
-
+    <!--Auth screen strings-->
     <string name="text_btn_auth_sign">Login</string>
+    <string name="hint_text_auth_email">Email</string>
+    <string name="hint_text_auth_pass">Password</string>
 
-    <string name="msg_edt_error_mail">Enter email</string>
+    <!--Edt errors-->
+    <string name="msg_edt_mail_error">Enter email</string>
     <string name="msg_edt_pass_error">Enter password</string>
+    <string name="msg_edt_title_error">Title can not be empty</string>
+    <string name="msg_edt_price_error">Price can not be empty</string>
 
-    <string name="hint_tiet_auth_email">Email</string>
-    <string name="hint_tiet_auth_pass">Password</string>
-
-    <string name="add_fruit_name"> ADD fruit</string>
-    <string name="fruit_det">fruit DETAIL</string>
-    <string name="delete_fruit">Delete selected item?</string>
-    <string name="yes">YES</string>
-    <string name="no">NO</string>
-    <string name="edit">Edit</string>
-    <string name="done">Done</string>
-    <string name="favorite_ic">Favorite</string>
-    <string name="unfavorite">Unfavorite</string>
-    <string name="text_added_new_fruit">Added new fruit</string>
-    <string name="text_no_network">NO INTERNET CONNECTION</string>
-    <string name="fruit_list">Fruit List</string>
-    <string name="esim_inch">esim inch</string>
     <!--Notification strings-->
-    <string name="notif_add">Added</string>
-    <string name="notif_update">Updated</string>
+    <string name="notify_add">Added</string>
+    <string name="notify_update">Updated</string>
 
 </resources>

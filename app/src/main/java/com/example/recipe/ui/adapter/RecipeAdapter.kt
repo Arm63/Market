@@ -1,0 +1,136 @@
+import android.content.Context
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.market.R
+import com.example.recipe.db.entity.Recipe
+import kotlinx.android.synthetic.main.layout_recipe_list_item.view.*
+
+
+class RecipeAdapter(
+    var mContext: Context,
+    var mRecipeList: ArrayList<Recipe>,
+    var onItemClickListener: OnItemClickListener
+) :
+    RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
+
+    // ===========================================================
+    // Constants
+    // ===========================================================
+
+    private val LOG_TAG: String = RecipeAdapter::class.java.simpleName
+
+    // ===========================================================
+    // Fields
+    // ===========================================================
+
+    var lastPosition = -1
+
+    // ===========================================================
+    // Constructors
+    // ===========================================================
+
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
+
+    // ===========================================================
+    // Methods for/from SuperClass
+    // ===========================================================
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
+        val view: View = LayoutInflater.from(parent.context)
+            .inflate(R.layout.layout_recipe_list_item, parent, false)
+        return RecipeViewHolder(view, mRecipeList, onItemClickListener)
+    }
+
+    override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
+        val animation = AnimationUtils.loadAnimation(mContext, R.anim.slide_in_row)
+        holder.itemView.startAnimation(animation)
+        holder.bindData(mRecipeList[position])
+        lastPosition = holder.adapterPosition
+    }
+
+    override fun getItemCount(): Int = mRecipeList.size
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+    }
+    // ===========================================================
+    // Other Listeners, methods for/from Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Click Listeners
+    // ===========================================================
+
+    // ===========================================================
+    // Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Inner and Anonymous Classes
+    // ===========================================================
+
+    //------------------------------------------------------------------------------------------------
+
+    class RecipeViewHolder constructor(
+        itemView: View,
+        var recipeList: ArrayList<Recipe>,
+        private var onItemClickListener: OnItemClickListener
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        var llItemContainer: LinearLayout? = itemView.findViewById(R.id.ll_recipe_item_container)
+
+        fun bindData(recipe: Recipe) {
+            val requestOption = RequestOptions()
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background)
+
+            Glide.with(itemView.context)
+                .applyDefaultRequestOptions(requestOption)
+                .load(recipe.image)
+                .into(itemView.iv_recipe_item)
+
+            itemView.tv_recipe_item_name.text = recipe.name
+            itemView.tv_recipe_item_price.text = recipe.price.toString()
+            Log.d("bindi mejic", recipe.toString())
+
+            llItemContainer!!.setOnClickListener {
+                onItemClickListener.onItemClick(recipeList[adapterPosition], adapterPosition)
+                Log.d("bindi clicki mejic", recipe.toString())
+            }
+            llItemContainer!!.setOnLongClickListener {
+                onItemClickListener.onItemLongClick(recipeList[adapterPosition], adapterPosition)
+                true
+            }
+        }
+    }
+
+    fun removeItem(position: Int) {
+        mRecipeList.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun restoreItem(item: Recipe, position: Int) {
+        mRecipeList.add(position, item)
+        notifyItemInserted(position)
+    }
+
+    fun getData(): ArrayList<Recipe> {
+        return mRecipeList
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(item: Recipe, position: Int)
+        fun onItemLongClick(item: Recipe, position: Int)
+    }
+
+}

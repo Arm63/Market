@@ -220,6 +220,7 @@ class RecipeInfoActivity : BaseActivity(), RecipeAsyncQueryHandler.AsyncQueryLis
         mLlRecipeEdit.visibility = View.VISIBLE
         Glide.with(this)
             .load(recipe.image)
+            .centerCrop()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(mIvRecipeImage)
 
@@ -238,8 +239,8 @@ class RecipeInfoActivity : BaseActivity(), RecipeAsyncQueryHandler.AsyncQueryLis
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(mIvRecipeImage)
 
-        tv_recipe_title.text = "Name: " + recipe.name
-        tv_recipe_price.text = "Price: " + recipe.price.toString()
+        tv_recipe_title.text = recipe.name
+        tv_recipe_price.text = recipe.price.toString()
         tv_recipe_desc.text = recipe.description
     }
 

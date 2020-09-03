@@ -56,4 +56,5 @@ abstract class BaseFragment : Fragment() {
         super.onDestroyView()
         BusProvider.unregister(this)
     }
+
 }

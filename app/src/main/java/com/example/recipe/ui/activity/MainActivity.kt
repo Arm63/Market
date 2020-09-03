@@ -1,7 +1,6 @@
 package com.example.recipe.ui.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -13,6 +12,7 @@ import com.example.market.R
 import com.example.recipe.ui.fragment.BaseFragment
 import com.example.recipe.ui.fragment.FavoriteFragment
 import com.example.recipe.ui.fragment.RecipeListFragment
+import com.example.recipe.ui.fragment.SortFragment
 import com.example.recipe.util.Constant
 import com.example.recipe.util.FragmentTransactionManager
 import com.google.android.material.navigation.NavigationView
@@ -107,8 +107,6 @@ class MainActivity : BaseActivity(), View.OnClickListener,
             R.id.fl_main_container,
             addToBackStack
         )
-        Log.d(LOG_TAG, "jpcneluc heto")
-
     }
 
 
@@ -123,6 +121,12 @@ class MainActivity : BaseActivity(), View.OnClickListener,
                 openScreen(
                     FavoriteFragment.newInstance(),
                     R.id.nav_fv_list,
+                    true
+                )
+            R.id.nav_sort_list ->
+                openScreen(
+                    SortFragment.newInstance(),
+                    R.id.nav_sort_list,
                     true
                 )
 

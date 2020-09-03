@@ -29,9 +29,9 @@ class FavoriteFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
     }
 
     private lateinit var mRecyclerView: RecyclerView
-    private lateinit var mrecipeAdapter: RecipeAdapter
-    private lateinit var mrecipeFavList: ArrayList<Recipe>
-    private lateinit var mrecipeAQH: RecipeAsyncQueryHandler
+    private lateinit var mRecipeAdapter: RecipeAdapter
+    private lateinit var mRecipeFavList: ArrayList<Recipe>
+    private lateinit var mRecipeAQH: RecipeAsyncQueryHandler
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -47,7 +47,7 @@ class FavoriteFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
 
     override fun onStart() {
         super.onStart()
-        mrecipeAQH.getFavoriteRecipes()
+        mRecipeAQH.getFavoriteRecipes()
     }
 
     private fun findViews(view: View?) {
@@ -55,15 +55,15 @@ class FavoriteFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
     }
 
     private fun init() {
-        mrecipeAQH = activity?.applicationContext?.let { RecipeAsyncQueryHandler(it, this) }!!
+        mRecipeAQH = activity?.applicationContext?.let { RecipeAsyncQueryHandler(it, this) }!!
 
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.layoutManager = LinearLayoutManager(activity)
         mRecyclerView.itemAnimator = DefaultItemAnimator()
 
-        mrecipeFavList = ArrayList()
-        mrecipeAdapter = context?.let { RecipeAdapter(it, mrecipeFavList, this) }!!
-        mRecyclerView.adapter = mrecipeAdapter
+        mRecipeFavList = ArrayList()
+        mRecipeAdapter = context?.let { RecipeAdapter(it, mRecipeFavList, this) }!!
+        mRecyclerView.adapter = mRecipeAdapter
     }
 
     private fun setListeners() {
@@ -86,9 +86,9 @@ class FavoriteFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
             .setCancelable(false)
             .setPositiveButton(R.string.text_btn_dialog_yes) { dialog, _ ->
                 item.isFavorite = false
-                mrecipeAQH.updateRecipe(item)
-                mrecipeFavList.removeAt(position)
-                mrecipeAdapter.notifyItemRemoved(position)
+                mRecipeAQH.updateRecipe(item)
+                mRecipeFavList.removeAt(position)
+                mRecipeAdapter.notifyItemRemoved(position)
                 dialog.cancel()
             }
             .setNegativeButton(
@@ -108,12 +108,12 @@ class FavoriteFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
                 val favoriterecipes = cursor?.let { CursorReader.parseRecipes(it) }
 
                 if (favoriterecipes!!.size != 0) {
-                    mrecipeFavList.clear()
-                    mrecipeFavList.addAll(favoriterecipes)
-                    mrecipeAdapter.notifyDataSetChanged()
+                    mRecipeFavList.clear()
+                    mRecipeFavList.addAll(favoriterecipes)
+                    mRecipeAdapter.notifyDataSetChanged()
                 } else {
-                    mrecipeFavList.clear()
-                    mrecipeAdapter.notifyDataSetChanged()
+                    mRecipeFavList.clear()
+                    mRecipeAdapter.notifyDataSetChanged()
                 }
             }
         }

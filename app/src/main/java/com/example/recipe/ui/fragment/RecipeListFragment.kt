@@ -1,6 +1,7 @@
 package com.example.recipe.ui.fragment
 
 import RecipeAdapter
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -11,15 +12,11 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import android.view.*
+import android.widget.SearchView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.market.R
 import com.example.recipe.db.cursor.CursorReader
@@ -27,15 +24,18 @@ import com.example.recipe.db.entity.Recipe
 import com.example.recipe.db.handler.RecipeAsyncQueryHandler
 import com.example.recipe.db.handler.RecipeQueryHandler
 import com.example.recipe.io.bus.BusProvider
+import com.example.recipe.io.bus.event.ApiEvent
 import com.example.recipe.io.service.RecipeIntentService
 import com.example.recipe.ui.activity.RecipeAddActivity
 import com.example.recipe.ui.activity.RecipeInfoActivity
+import com.example.recipe.ui.adapter.decorator.MyDividerItemDecoration
+import com.example.recipe.util.AppUtil
 import com.example.recipe.util.Constant
-import com.example.recipe.util.Constant.RequestCode.ADD_RECIPE_ACTIVITY
 import com.example.recipe.util.NetworkUtil
 import com.example.recipe.util.SwipeToDeleteCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.common.eventbus.Subscribe
 
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -52,7 +52,6 @@ class RecipeListFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
 
     private var icon: Drawable? = null
     private var background: ColorDrawable? = null
-    private var coordinatorLayout: CoordinatorLayout? = null
 
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mRecyclerViewAdapter: RecipeAdapter
@@ -93,29 +92,77 @@ class RecipeListFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
         mFloatingActionButton = view.findViewById(R.id.fl_btn_recipe_add) as FloatingActionButton
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_recipe_search, menu)
+
+        val item = menu.findItem(R.id.search)
+        val searchView = item.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(query: String): Boolean {
+                mRecyclerViewAdapter.getFilter().filter(query)
+                return false
+            }
+        })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_sort_by_name -> {
+                Log.d("asdasdas", "asdas${mRecipeList.size}")
+                mRecyclerViewAdapter.sortByName(mRecipeList)
+                mRecyclerViewAdapter.notifyDataSetChanged()
+                Log.d("asdasdas", "asdas${mRecipeList.size}")
+            }
+            R.id.menu_sort_by_price -> {
+                mRecyclerViewAdapter.sortByPrice(mRecipeList)
+                mRecyclerViewAdapter.notifyDataSetChanged()
+            }
+            R.id.menu_sort_by_fav -> {
+                mRecyclerViewAdapter.sortByFav(mRecipeList)
+                mRecyclerViewAdapter.notifyDataSetChanged()
+
+            }
+        }
+        onRefresh()
+        return true
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     private fun init() {
+        mRecipeAQH = activity?.applicationContext?.let { RecipeAsyncQueryHandler(it, this) }!!
+
         icon = context?.let { ContextCompat.getDrawable(it, R.drawable.ic_delete_white) };
         background = ColorDrawable(Color.RED)
-
-        mRecipeAQH = activity?.applicationContext?.let { RecipeAsyncQueryHandler(it, this) }!!
 
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.layoutManager = LinearLayoutManager(activity)
         mRecyclerView.itemAnimator = DefaultItemAnimator()
+        context?.let {
+            MyDividerItemDecoration(it, DividerItemDecoration.VERTICAL, 16)
+        }?.let {
+            mRecyclerView.addItemDecoration(it)
+        }
 
         mRecipeList = ArrayList()
         mRecyclerViewAdapter = context?.let { RecipeAdapter(it, mRecipeList, this) }!!
         mRecyclerView.adapter = mRecyclerViewAdapter
         mSwipeRefreshLayout.isRefreshing = false
 
-
-//        itemTouchHelper.attachToRecyclerView(mRecyclerView)
     }
+
 
 
     private fun setListeners() {
         mSwipeRefreshLayout.setOnRefreshListener(this)
         mFloatingActionButton.setOnClickListener(this)
+        mRecyclerView.setOnTouchListener { _, _ ->
+            AppUtil.closeKeyboard(activity)
+            false
+        }
     }
 
 // ===========================================================
@@ -127,17 +174,6 @@ class RecipeListFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
 // Other Listeners, methods for/from Interfaces
 // ===========================================================
 
-//    @Subscribe
-//    fun onEventReceived(apiEvent: ApiEvent<Any?>) {
-//        if (!apiEvent.isSuccess) {
-//            mrecipeAQH.getrecipes()
-//            Toast.makeText(activity, "", Toast.LENGTH_SHORT).show()
-//        } else {
-////            mSwipeRefreshLayout.isRefreshing = true
-//        }
-//    }
-
-
 
     private fun enableSwipeToDeleteAndUndo() {
         val swipeToDeleteCallback: SwipeToDeleteCallback =
@@ -147,7 +183,12 @@ class RecipeListFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
                     val item: Recipe = mRecyclerViewAdapter.getData()[position]
                     mRecipeList.removeAt(position)
                     mRecyclerViewAdapter.notifyItemRemoved(position)
-                    mRecipeAQH.deleteRecipe(item, position)
+                    mRecipeAQH.deleteRecipe(item)
+                    showSnackbar(item, position)
+
+                }
+
+                private fun showSnackbar(item: Recipe, position: Int) {
                     val snackbar = mRecyclerView.let {
                         Snackbar
                             .make(
@@ -159,6 +200,7 @@ class RecipeListFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
                     snackbar.setAction("UNDO") {
                         mRecyclerViewAdapter.restoreItem(item, position)
                         mRecyclerView.scrollToPosition(position)
+
                     }
                     snackbar.setActionTextColor(Color.YELLOW)
                     snackbar.show()
@@ -175,17 +217,38 @@ class RecipeListFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
     }
 
     override fun onItemLongClick(item: Recipe, position: Int) {
-        openDeleterecipeDialog(item, position)
-        Log.d("asdasdasda", " " + RecipeQueryHandler.getRecipes(context!!)?.size)
+        openDeleteRecipeDialog(item, position)
     }
 
 
-    private fun openDeleterecipeDialog(recipe: Recipe, position: Int) {
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.fl_btn_recipe_add -> {
+                val intent = Intent(activity, RecipeAddActivity::class.java)
+                startActivityForResult(intent, Constant.RequestCode.ADD_RECIPE_ACTIVITY)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                Constant.RequestCode.ADD_RECIPE_ACTIVITY -> {
+                    val recipe: Recipe = data!!.getParcelableExtra(Constant.Extra.EXTRA_recipe)
+                    mRecipeList.add(recipe)
+                    mRecyclerViewAdapter.notifyDataSetChanged()
+                }
+            }
+        }
+    }
+
+
+    private fun openDeleteRecipeDialog(recipe: Recipe, position: Int) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
         builder.setMessage(R.string.msg_dialog_delete_recipe)
             .setCancelable(false)
             .setPositiveButton(R.string.text_btn_dialog_yes) { dialog, _ ->
-                mRecipeAQH.deleteRecipe(recipe, position)
+                mRecipeAQH.deleteRecipe(recipe)
                 mRecipeList.removeAt(position)
                 mRecyclerViewAdapter.notifyItemRemoved(position)
                 dialog.cancel()
@@ -224,6 +287,16 @@ class RecipeListFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
 
     }
 
+    @Subscribe
+    fun onEventReceived(apiEvent: ApiEvent<Any?>) {
+        if (!apiEvent.isSuccess) {
+            mRecipeAQH.getRecipes()
+            Toast.makeText(activity, "", Toast.LENGTH_SHORT).show()
+        } else {
+//            mSwipeRefreshLayout.isRefreshing = true
+        }
+    }
+
     override fun onRefresh() {
         mSwipeRefreshLayout.isRefreshing = true
         if (NetworkUtil.instance!!.isConnected(context!!) && RecipeQueryHandler.getRecipes(
@@ -235,33 +308,13 @@ class RecipeListFragment : BaseFragment(), RecipeAdapter.OnItemClickListener,
                 Constant.API.recipe_LIST,
                 Constant.RequestType.recipe_LIST
             )
-
         mSwipeRefreshLayout.isRefreshing = false
     }
+
 
     override fun onDestroyView() {
         BusProvider.unregister(this)
         super.onDestroyView()
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.fl_btn_recipe_add -> {
-                val intent = Intent(activity, RecipeAddActivity::class.java)
-                startActivityForResult(intent, ADD_RECIPE_ACTIVITY)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                ADD_RECIPE_ACTIVITY -> {
-                    val recipe: Recipe = data!!.getParcelableExtra(Constant.Extra.EXTRA_recipe)
-                    mRecipeList.add(recipe)
-                    mRecyclerViewAdapter.notifyDataSetChanged()
-                }
-            }
-        }
-    }
 }

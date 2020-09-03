@@ -136,17 +136,6 @@ class RecipeAsyncQueryHandler(context: Context, queryListenerReference: AsyncQue
     }
 
     @Synchronized
-    fun deleteRecipe(recipe: Recipe, cookie: Any) {
-        startDelete(
-            QueryToken.DELETE_recipe,
-            null,
-            UriBuilder.buildRecipeUri(),
-            RecipeDB.RECIPE_ID + "=?",
-            arrayOf((recipe.id).toString())
-        )
-    }
-
-    @Synchronized
     fun deleteRecipe(recipe: Recipe) {
         startDelete(
             QueryToken.DELETE_recipe,

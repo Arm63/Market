@@ -58,7 +58,7 @@ class RecipeAddActivity : BaseActivity(), View.OnClickListener,
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_recipe_item, menu)
         mMenuFavorite = menu!!.findItem(R.id.menu_recipe_favorite)
-        if (mRecipe.isFavorite!!)
+        if (mRecipe.isFavorite)
             mMenuFavorite.setIcon(R.drawable.ic_favorite)
         return true
     }
@@ -70,7 +70,7 @@ class RecipeAddActivity : BaseActivity(), View.OnClickListener,
                 return true
             }
             R.id.menu_recipe_favorite -> {
-                if (mRecipe.isFavorite!!) {
+                if (mRecipe.isFavorite) {
                     mMenuFavorite.setIcon(R.drawable.ic_unfavorite)
                     mRecipe.isFavorite = false
                 } else {
@@ -169,13 +169,37 @@ class RecipeAddActivity : BaseActivity(), View.OnClickListener,
                 addRecipeDialog()
                 return
             }
+            R.id.iv_add_recipe_logo -> {
+                val intent = Intent(this, CameraActivity::class.java)
+                startActivityForResult(intent, Constant.RequestCode.CAMERA_ACTIVITY)
+                return
+            }
+
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                Constant.RequestCode.CAMERA_ACTIVITY -> {
+                    val photoUri = data!!.extras!![Constant.Extra.EXTRA_PHOTO_URI] as Uri?
+                    mRecipe.image = photoUri.toString()
+                    Glide.with(this)
+                        .load(photoUri)
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(mIvRecipeImage)
+                    return
+                }
+            }
         }
     }
 
     private fun addRecipeDialog() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
             .setMessage(R.string.msg_dialog_add_recipe)
-            .setPositiveButton(R.string.text_btn_dialog_ok) { dialog, which ->
+            .setPositiveButton(R.string.text_btn_dialog_ok) { _, _ ->
                 mRecipeAQH.addRecipe(mRecipe)
             }
             .setNegativeButton(R.string.text_btn_dialog_cancel, null)
